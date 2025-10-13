@@ -9,7 +9,7 @@
 
 # build compiles the program for the builder's local platform
 FROM --platform=${BUILDPLATFORM} alpine:3.22 AS build
-RUN apk add --no-cache dotnet8-sdk
+RUN apk add --no-cache dotnet9-sdk
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -18,6 +18,9 @@ RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 
 WORKDIR /source
 COPY *.csproj .
+RUN dotnet add package StackExchange.Redis \
+  && dotnet add package Npgsql \
+  && dotnet add package Newtonsoft.Json
 RUN dotnet restore -a $TARGETARCH
 
 COPY . .
@@ -25,7 +28,7 @@ RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no
 
 # app image
 FROM alpine:3.22
-RUN apk add --no-cache dotnet8-sdk
+RUN apk add --no-cache dotnet9-sdk
 WORKDIR /app
 COPY --from=build /app .
 ENTRYPOINT ["dotnet", "Worker.dll"]
