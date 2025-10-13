@@ -1,10 +1,8 @@
 # base defines a base stage that uses the official python runtime base image
-FROM python:3.14-slim AS base
+FROM python:3.14-alpine AS base
 
 # Add curl for healthcheck
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 # Set the application directory
 WORKDIR /usr/local/app
