@@ -1,9 +1,7 @@
-FROM node:18-slim
+FROM node:22-alpine
 
 # add curl for healthcheck
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl tini && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache tini curl
 
 WORKDIR /usr/local/app
 
